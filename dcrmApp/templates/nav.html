@@ -12,5 +12,11 @@
           </li>
          
       </div>
+      {% if user.is_authenticated %}
+      <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-secondary" type="submit">Logout</button>
+      </form>
+      {% endif %}
     </div>
   </nav>
