@@ -19,8 +19,8 @@ def home(request):
             return redirect('home')
     return render(request, 'home.html',{})
 
-def register(request):
-    pass
+def register_user(request):
+    return render(request, 'register.html',{})
 
 
 def logout_user(request):

@@ -17,6 +17,11 @@
         {% csrf_token %}
         <button class="btn btn-secondary" type="submit">Logout</button>
       </form>
+      {% else %}
+      <form action="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        <button class="btn btn-secondary" type="submit">Register</button>
+      </form>
       {% endif %}
     </div>
   </nav>
