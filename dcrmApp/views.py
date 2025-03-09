@@ -37,6 +37,19 @@ def register_user(request):
     return render(request, 'register.html',{'form':form})
 
 
+def customer_record(request, pk):
+    if request.user.is_authenticated:
+        try:
+            record = Record.objects.get(id=pk)
+            return render(request, 'record.html', {'record':record})
+        except Record.DoesNotExist:
+            messages.error(request, "Record does not exist")
+            return redirect('home')
+    else:
+        messages.error(request, "You must be logged in to view this page")
+        return redirect('home')
+    
+
 def logout_user(request):
     logout(request)
     messages.success(request, "You have been logged out!")
