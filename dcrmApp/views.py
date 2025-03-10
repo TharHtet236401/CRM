@@ -6,11 +6,16 @@ from .models import Record
 from .decorators import login_required_with_message
 from django.contrib.auth.decorators import login_required
 from django.utils.http import quote
+from django.core.paginator import Paginator
+
 
 
 # Create your views here.
 def home(request):
     records = Record.objects.all()
+    paginator = Paginator(records, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -28,7 +33,7 @@ def home(request):
             if next_url:
                 return redirect(f'/?next={quote(next_url)}')
             return redirect('home')
-    return render(request, 'home.html', {'records': records})
+    return render(request, 'home.html', {'records': page_obj})
 
 def register_user(request):
     if request.method == 'POST':
