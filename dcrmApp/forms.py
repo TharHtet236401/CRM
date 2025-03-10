@@ -63,5 +63,5 @@ class AddRecordForm(forms.ModelForm):
 	
 	class Meta:
 		model = Record
-		exclude = ("user",)
+		exclude = ("user","added_by")
 

@@ -70,6 +70,7 @@ def add_record(request):
     try:
         form = AddRecordForm(request.POST or None)
         if request.method == 'POST':
+            form.instance.added_by = request.user
             if form.is_valid():
                 form.save()
                 messages.success(request, "Record added successfully")
