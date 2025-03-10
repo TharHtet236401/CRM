@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Profile</h1>
+<div class="card">
+    <div class="card-header">
+        <strong>
+            {{ user.first_name }} {{ user.last_name }}
+        </strong>
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            <strong>Email:</strong> {{ user.email }}
+            
+        </p>
+    </div>
+</div>
+<br>
+<a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+{% endblock %}

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm, AddRecordForm
+from .forms import SignUpForm, AddRecordForm, ProfileEditForm
 from .models import Record
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -82,6 +83,31 @@ def update_record(request, pk):
         return render(request, 'update_record.html',{'form':form})
     else:
         messages.error(request, "You must be logged in to update a record")
+        return redirect('home')
+
+def profile(request):
+    if request.user.is_authenticated:
+        user = request.user
+        print(user)
+        return render(request, 'profile.html', {'user':user})
+    else:
+        messages.error(request, "You must be logged in to view this page")
+        return redirect('home')
+
+@login_required
+def edit_profile(request):
+    try:
+        if request.method == 'POST':
+            form = ProfileEditForm(request.POST, instance=request.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Profile updated successfully!")
+                return redirect('home')
+        else:
+            form = ProfileEditForm(instance=request.user)
+        return render(request, 'edit_profile.html', {'form': form})
+    except Exception as e:
+        messages.error(request, f"An error occurred while updating profile: {str(e)}")
         return redirect('home')
 
 def logout_user(request):
