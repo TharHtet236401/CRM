@@ -88,7 +88,7 @@ def update_record(request, pk):
         if request.method == 'POST':
             if record.added_by != request.user:
                 messages.error(request, "You are not authorized to update this record")
-                return redirect('record', pk=pk)
+                return redirect('home')
             if form.is_valid():
                 form.save()
                 messages.success(request, "Record updated successfully")
