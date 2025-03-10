@@ -16,6 +16,7 @@ def home(request):
     paginator = Paginator(records, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    print(page_obj)
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
