@@ -33,14 +33,18 @@
             <li class="list-group-item">
                 <strong>ID:</strong> {{ record.id }}
             </li>
+           
             <li class="list-group-item">
                 <strong>Added By:</strong> {{ record.added_by }}
             </li>
+         
         </ul>
     </div>
 </div>
 
 <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
 <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">Delete</a>
+{% if record.added_by == user %}
 <a href="{% url 'update_record' record.id %}" class="btn btn-info">Update Record</a>
+{% endif %}
 {% endblock %}
