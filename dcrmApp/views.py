@@ -86,11 +86,14 @@ def update_record(request, pk):
         record = Record.objects.get(id=pk)
         form = AddRecordForm(request.POST or None, instance=record)
         if request.method == 'POST':
+            if record.added_by != request.user:
+                messages.error(request, "You are not authorized to update this record")
+                return redirect('record', pk=pk)
             if form.is_valid():
                 form.save()
                 messages.success(request, "Record updated successfully")
                 return redirect('home')
-        return render(request, 'update_record.html',{'form':form})
+        return render(request, 'update_record.html', {'form': form})
     except Record.DoesNotExist:
         messages.error(request, "Record does not exist")
         return redirect('home')
