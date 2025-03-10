@@ -54,18 +54,19 @@
 <h1>Login</h1>
 <br/>
 
-<form method="POST" action="{% url 'home' %}">
+<form method="POST" action="">
 	{% csrf_token %}
-
-  <div class="mb-3">
-    <input type="text" class="form-control" name="username", placeholder="Username" required>
-    
-  </div><br/>
-  <div class="mb-3">
-    <input type="password" class="form-control" name="password", placeholder="Password" required>
-  </div>
-  <br/>
-  <button type="submit" class="btn btn-secondary">Login</button>
+	{% if request.GET.next %}
+		<input type="hidden" name="next" value="{{ request.GET.next }}">
+	{% endif %}
+	<div class="mb-3">
+		<input type="text" class="form-control" name="username" placeholder="Username" required>
+	</div><br/>
+	<div class="mb-3">
+		<input type="password" class="form-control" name="password" placeholder="Password" required>
+	</div>
+	<br/>
+	<button type="submit" class="btn btn-secondary">Login</button>
 
 </form>
 

@@ -5,6 +5,7 @@ from .forms import SignUpForm, AddRecordForm, ProfileEditForm
 from .models import Record
 from .decorators import login_required_with_message
 from django.contrib.auth.decorators import login_required
+from django.utils.http import quote
 
 
 # Create your views here.
@@ -15,13 +16,19 @@ def home(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request,user)
+            login(request, user)
             messages.success(request, "Login successful")
+            next_url = request.POST.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('home')
         else:
             messages.error(request, "Invalid username or password")
+            next_url = request.POST.get('next')
+            if next_url:
+                return redirect(f'/?next={quote(next_url)}')
             return redirect('home')
-    return render(request, 'home.html',{'records':records})
+    return render(request, 'home.html', {'records': records})
 
 def register_user(request):
     if request.method == 'POST':
@@ -38,7 +45,7 @@ def register_user(request):
         form = SignUpForm()
     return render(request, 'register.html',{'form':form})
 
-@login_required_with_message
+@login_required
 def customer_record(request, pk):
     try:
         record = Record.objects.get(id=pk)
@@ -47,7 +54,7 @@ def customer_record(request, pk):
         messages.error(request, "Record does not exist")
         return redirect('home')
 
-@login_required_with_message
+@login_required
 def delete_record(request, pk):
     try:
         record = Record.objects.get(id=pk)
@@ -72,7 +79,7 @@ def add_record(request):
         messages.error(request, f"An error occurred while adding record: {str(e)}")
         return redirect('home')
 
-@login_required_with_message
+@login_required
 def update_record(request, pk):
     try:
         record = Record.objects.get(id=pk)
@@ -90,11 +97,11 @@ def update_record(request, pk):
         messages.error(request, f"An error occurred while updating record: {str(e)}")
         return redirect('home')
 
-@login_required_with_message
+@login_required
 def profile(request):
     return render(request, 'profile.html', {'user': request.user})
 
-@login_required_with_message
+@login_required
 def edit_profile(request):
     try:
         if request.method == 'POST':
