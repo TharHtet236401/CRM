@@ -127,9 +127,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'dcrmApp/static'),
 ]
 
-
+LOGIN_REDIRECT_URL = 'home'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Login URL for @login_required decorator
+LOGIN_URL = '/'  # Redirects to home page where our login form is

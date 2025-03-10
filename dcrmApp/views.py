@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm, ProfileEditForm
 from .models import Record
+from .decorators import login_required_with_message
 from django.contrib.auth.decorators import login_required
 
 
@@ -37,64 +38,63 @@ def register_user(request):
         form = SignUpForm()
     return render(request, 'register.html',{'form':form})
 
-
+@login_required_with_message
 def customer_record(request, pk):
-    if request.user.is_authenticated:
-        try:
-            record = Record.objects.get(id=pk)
-            return render(request, 'record.html', {'record':record})
-        except Record.DoesNotExist:
-            messages.error(request, "Record does not exist")
-            return redirect('home')
-    else:
-        messages.error(request, "You must be logged in to view this page")
+    try:
+        record = Record.objects.get(id=pk)
+        return render(request, 'record.html', {'record':record})
+    except Record.DoesNotExist:
+        messages.error(request, "Record does not exist")
         return redirect('home')
-    
+
+@login_required_with_message
 def delete_record(request, pk):
-    if request.user.is_authenticated:
+    try:
         record = Record.objects.get(id=pk)
         record.delete()
         messages.success(request, "Record deleted successfully")
         return redirect('home')
-    else:
-        messages.error(request, "You must be logged in to delete a record")
+    except Record.DoesNotExist:
+        messages.error(request, "Record does not exist")
         return redirect('home')
 
+@login_required
 def add_record(request):
-    if request.user.is_authenticated:
+    try:
         form = AddRecordForm(request.POST or None)
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
+                messages.success(request, "Record added successfully")
                 return redirect('home')
         return render(request, 'add_record.html',{'form':form})
-    else:
-        messages.error(request, "You must be logged in to add a record")
+    except Exception as e:
+        messages.error(request, f"An error occurred while adding record: {str(e)}")
         return redirect('home')
 
+@login_required_with_message
 def update_record(request, pk):
-    if request.user.is_authenticated:
+    try:
         record = Record.objects.get(id=pk)
         form = AddRecordForm(request.POST or None, instance=record)
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
+                messages.success(request, "Record updated successfully")
                 return redirect('home')
         return render(request, 'update_record.html',{'form':form})
-    else:
-        messages.error(request, "You must be logged in to update a record")
+    except Record.DoesNotExist:
+        messages.error(request, "Record does not exist")
+        return redirect('home')
+    except Exception as e:
+        messages.error(request, f"An error occurred while updating record: {str(e)}")
         return redirect('home')
 
+@login_required_with_message
 def profile(request):
-    if request.user.is_authenticated:
-        user = request.user
-        print(user)
-        return render(request, 'profile.html', {'user':user})
-    else:
-        messages.error(request, "You must be logged in to view this page")
-        return redirect('home')
+    return render(request, 'profile.html', {'user': request.user})
 
-@login_required
+@login_required_with_message
 def edit_profile(request):
     try:
         if request.method == 'POST':
